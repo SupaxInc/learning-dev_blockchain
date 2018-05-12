@@ -876,3 +876,15 @@ Main Net, end of May?
 
 # Citations
 
+http://solidity.readthedocs.io/en/v0.4.21/solidity-by-example.html?highlight=require%20function
+
+https://hackernoon.com/ethereum-development-walkthrough-part-1-smart-contracts-b3979e6e573e
+https://hackernoon.com/ethereum-development-walkthrough-part-2-truffle-ganache-geth-and-mist-8d6320e12269
+
+https://medium.com/@gus_tavo_guim/reentrancy-attack-on-smart-contracts-how-to-identify-the-exploitable-and-an-example-of-an-attack-4470a2d8dfe4
+https://ethereum.stackexchange.com/questions/10681/what-are-ipc-and-rpc
+https://blockgeeks.com/guides/ethereum-token/
+
+
+
+**Adding proper citations later**
