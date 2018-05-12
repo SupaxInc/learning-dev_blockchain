@@ -507,11 +507,11 @@ wrestler2 = msg.sender;
 
 **Note that  the wrestler1 and wrestler2 should have the same address as the initialized account0 and account1 from the beginning.**
 
-![wrestler1and2_address](E:\Class\Research\Pictures\wrestler1and2_address.png)
+![wrestler1and2_address](C:\Users\Supax2\Documents\GitHub\learning-dev_blockchain\Pictures\wrestler1and2_address.png)
 
 To check that it is the same, use the call() function again to check.
 
-![calledwrestler1and2](E:\Class\Research\Pictures\calledwrestler1and2.png)
+![calledwrestler1and2](C:\Users\Supax2\Documents\GitHub\learning-dev_blockchain\Pictures\calledwrestler1and2.png)
 
 
 
@@ -528,7 +528,7 @@ WrestlingInstance.wrestle({from: account1, value: web3.toWei(20, "ether")})
 
 The *toWei()* function is used to convert the amount of Ethereum into wei which is the lowest denomination of Ether (eg. Satoshi's from bitcoin). 
 
-![eventlogs](E:\Class\Research\Pictures\eventlogs.png)
+![eventlogs](C:\Users\Supax2\Documents\GitHub\learning-dev_blockchain\Pictures\eventlogs.png)
 
 *Remember to always look at the logs after every transaction to see if the events have properly occured, for step 5, the event "EndOfWrestlingEvent" should occur as the two wrestlers have finally played.*
 
@@ -619,7 +619,7 @@ geth --datadir=./chaindata/ --rpc
 
 This line will start up Geth in our generated chaindata folder, the "--rpc" command tells Geth to accept remote procedure calls (RPC) connections. An RPC connection will be used for client-server interaction and **this command will let us create an RPC end point for our local loopback IP** (127.0.0.1). 
 
-![httpendpoint](E:\Class\Research\Pictures\httpendpoint.png)
+![httpendpoint](C:\Users\Supax2\Documents\GitHub\learning-dev_blockchain\Pictures\httpendpoint.png)
 
 *From this picture, you can see that the HTTP end point for our loopback IP is now available for us to connect*
 
@@ -649,7 +649,7 @@ start mist -rpc http://127.0.0.1:8545
 
 **Step 7) **When Mist is opened, create a new wallet with a simple password (do not use your main account with your real Ethereum). In this case, I will be using the password "123456789". **Make sure to not use the same password as your real wallet account, remember this is just for testing purposes.**
 
-![priavtenetwork](E:\Class\Research\Pictures\priavtenetwork.png)
+![priavtenetwork](C:\Users\Supax2\Documents\GitHub\learning-dev_blockchain\Pictures\priavtenetwork.png)
 
 *At the bottom left, your Mist wallet must have the Private symbol to have successfully ran our own local private test net. If this is not there, **do not continue on to the next steps**.*
 
@@ -689,7 +689,7 @@ miner.start()
 
 *null* Message will popup which is okay, wait a couple of seconds or minutes then these messages should pop up on the console of where we enabled RPC connections:
 
-![miningblock](E:\Class\Research\Pictures\miningblock.png)
+![miningblock](C:\Users\Supax2\Documents\GitHub\learning-dev_blockchain\Pictures\miningblock.png)
 
 **Check your wallet and you should start seeing your wallet start to receive Ethereum in a fast rate**.
 
@@ -791,7 +791,7 @@ The information that you see on the console is very important because we will be
 
 **Take out the single quotations of the copied information**, it should look like this:
 
-![watchcontract](E:\Class\Research\Pictures\watchcontract.png)
+![watchcontract](C:\Users\Supax2\Documents\GitHub\learning-dev_blockchain\Pictures\watchcontract.png)
 
 
 
