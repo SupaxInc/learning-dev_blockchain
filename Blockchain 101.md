@@ -835,9 +835,57 @@ Examples: A dApp called CryptoKitties created on the Ethereum blockchain contain
 
 
 
+
+
+
+
 ##### Creating the Token
 
-We will be creating an ERC20 standardized token, which means we will be following the set of rules made by the Ethereum foundation to create this token. 
+We will be creating an ERC20 standardized token, which means we will be following the guidelines made by the Ethereum foundation to create this token. 
+
+
+
+```javascript
+pragma solidity ^0.4.18;
+
+contract SupaxToken {
+    
+    function totalSupply() public constant returns (uint);
+    function balanceOf(address tokenOwner) public constant returns (uint balance);
+    function allowance(address tokenOwner, address spender) public constant returns (uint remaining);
+    function transfer(address to, uint tokens) public returns (bool success);
+    function approve(address spender, uint tokens) public returns (bool success);
+    function transferFrom(address from, address to, uint tokens) public returns (bool success);
+    
+    event Transfer(address indexed from, address indexed to, uint tokens);
+    event Approval(address indexed tokenOwner, address indexed spender, uint tokens);
+    
+    string public tokenName = "Supax";
+    string public symbol = "SPX";
+    
+    uint8 public decimals = 4;
+    
+    uint256 public totalSupply;
+    
+    mapping(address => uint256) balances;
+    
+    function SupaxToken() public {  // constructor
+        totalSupply = 1000000;
+        
+        balances[msg.sender] = 100;     // update the balance of who created the contract
+    }
+    
+    //  getter function to get maximum supply
+    function totalSupply() public constant returns (uint256 _totalSupply){
+        return totalSupply;
+    }
+    
+    //  getter function to get balance
+    function balanceOf (address tokenOwner) public view returns (uint256 balance){
+        return balances[tokenOwner];
+    }
+}
+```
 
 
 
