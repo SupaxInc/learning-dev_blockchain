@@ -811,11 +811,43 @@ The information that you see on the console is very important because we will be
 
 #### Creating Tokens on the Ethereum Blockchain
 
+In this section, I will be teaching you how to create your own **token** and as an example we will be creating the **SupaxCoin**.
+
 ##### What are tokens?
 
-As everyone knows, Ethereum is a currency on its own but what people don't know is that other currencies may co-exist within the Ethereum blockchain. The 'currency of a currency' in blockchains may also be known as **tokens**. 
+As everyone knows, Ethereum is a currency on its own but what people don't understand is that other currencies may co-exist within the Ethereum blockchain. The 'currency of a currency' in blockchains may also be known as **tokens**. 
 
-Tokens are important for blockchains because they are used for decentralized applications (**dApps**). These applications are decentralized because they are not being ran by a single entity (e.g, the government), it runs on a peer to peer network of many computers. Imagine the Ethereum blockchain as the main hub of networks and the different dApps that are built on top of it are ran through the main hub. 
+Tokens are important for blockchains because they are used for decentralized applications (**dApps**). These applications are decentralized because they are not being ran by a single entity (e.g, the government), it runs on a peer to peer network comprised of many computers. Since decentralized applications are not owned by a single person, the way to figure out ownership is by creating a crowdfund called an initial coin offering (**ICO**) which is similar to an IPO in stocks. The way ICO's work is that people are able to send their Ethereum to the dApp's ICO wallet address and the company will convert the Ethereum into their own token.
+
+There are many types of tokens on Ethereum: **ERC20** and **ERC721** are one of the two main types/guidelines of a token. **ERC** means **E**thereum **R**equest for **C**omments and the numbers are just the ID for the different set of rules for the token. 
+
+
+
+**ERC20 (fungible)**: An ERC20 token runs on the Ethereum network. These types of tokens do not have any uses for it other than be traded/transferred from exchanges that support ERC20 tokens and are easily replaceable. However, some companies do use the ERC20 standard token to launch a crowdfund to be able to develop their own blockchain for their token. Additionally, this type of token may also be labelled as a **work token** because it acts as a shareholder for the dApp. 
+
+Examples: TRON and OmiseGo piggyback on the Ethereum network as just tokens but plan to create their own blockchain.
+
+
+
+**ERC721 (non-fungible)**:  An ERC721 tokens are not replaceable and could be labelled as a **collectible** type of token. This means that when a dApp uses ERC721 they are able to create items that uses that standard that are unique rather than being duplicated like an ERC20 token. This type of token may also be called as a **usage token** because it contains value and could be used as a currency for the dApp.
+
+Examples: A dApp called CryptoKitties created on the Ethereum blockchain contain an ERC721 token which is a unique kitty that could be traded or transferred between other uses for value.
+
+
+
+##### Creating the Token
+
+We will be creating an ERC20 standardized token, which means we will be following the set of rules made by the Ethereum foundation to create this token. 
+
+
+
+
+
+
+
+
+
+
 
 
 
