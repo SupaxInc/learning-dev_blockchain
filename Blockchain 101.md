@@ -36,8 +36,8 @@ contract Wrestling {	// how to start creating the smart contract
     bool public wrestler2Played;
     
     // private variables could only be accessed inside the contract
-    uint private wrestler1Deposit;
-    uint private wrestler2Deposit;
+    uint private wrestler1Deposit;	// defaults to uint256
+    uint private wrestler2Deposit;	// defaults to uint256
     
     bool public gameFinished;
     
@@ -242,6 +242,13 @@ function registerAsAnOpponent() public {
 
 **eg.** In this example, if the address variable wrestler2 equals to a 0x0 address then we will continue with the function. Else, if the condition becomes false then it means that the wrestler2 has already been registered therefore we will refuse any new registrations. 
 
+You are also able to add an error message to why the require function has failed:
+
+```javascript
+require(wrestler2 == address(0), "Address has already been registered");
+// If wrestler2 is already registered, it will pop up the error message in the require function.
+```
+
 
 
 
@@ -324,6 +331,14 @@ A form of attack from hackers that makes them call a function that withdraws eth
 ###### Remix IDE
 
 It is a website IDE, try it out [here](https://ethereum.github.io/browser-solidity/).
+
+###### Free Ethereum on Testnet
+
+On metamask, go to Ropsten Testnet, then to receive your free Ethereum go to the Ethereum Ropsten Faucet here: http://faucet.ropsten.be:3001/
+
+###### BUGS
+
+If smart contracts do not compile properly move back from Javascript VM back to default then again to Javascript VM and redeploy contract.
 
 
 
@@ -899,6 +914,144 @@ contract SupaxToken {
 
 
 
+### Front End Development Using Metamask and Node.js
+
+Tutorial from HardlyDifficult: https://steemit.com/tutorial/@hardlydifficult/ethereum-dapp-tutorial-part-2-of-3-web-front-end-with-metamask-integration
+
+Modified to fit with the WrestlingTime contract.
+
+##### Requirements
+
+1. Use the [Solidity Documentation](http://solidity.readthedocs.io/en/v0.4.24/) for creating smart contracts.
+2. Use the [Ownable class code](https://github.com/OpenZeppelin/openzeppelin-solidity/blob/master/contracts/ownership/Ownable.sol) when creating smart contracts. 
+3. Download [Metamask](https://metamask.io/) Chrome Extension. 
+4. Use [Ropsten Testnet Faucet](http://faucet.ropsten.be:3001/) to get free Ethereum for dApp testing.
+5. Change the network in MetaMask to **Ropsten Testnet**.
+6. Install [NPM and Node.js](https://www.npmjs.com/get-npm).
+
+
+
+##### Steps
+
+**Step 1)** Create a smart contract first using the Ethereum web solidity compiler (**the browser compiler is pretty powerful**) from [here](https://remix.ethereum.org). 
+
+In this example we will be using the same smart contract file that we have created from the beginning of this document. (**Wrestling Time**)
+
+
+
+**Step 2)** Compile your smart contract.
+
+
+
+**Step 3)** In the Solidity compiler, go to the run tab and put the environment as **JavaScript VM**.  In this VM environment, you are able to test your contract and be able to change to different accounts. Try different accounts and register the two different wrestlers using the events in the WrestlingTime smart contract.
+
+You can debug through the code if an error happens by pressing debug on the error log in the console.
+
+
+
+**Step 4) ** After testing the different function and events, switch the environment to **Injected Web 3**. In this environment, we are able to use MetaMask to test our dApp.
+
+Deploy the **WrestlingTime** contract again and use a value of 4.3 wei as the gas. **(DOUBLE CHECK THAT YOU ARE IN ROPSTEN TESTNET)**
+
+
+
+**Step 5)** Once the contract is deployed, **verify** and **publish** the source code to the **Ethereum block explorer** as it is ethical to do so.  [Here](https://ropsten.etherscan.io/) is the link to **Ropsten Testnet Block Explorer**. 
+
+Copy the contract address from the Remix IDE and paste it onto the Block Explorer. 
+
+Go to the `Code` Tab and press **Verify and Publish**.
+
+Now enter the Contract Address, Contract Name, Compiler Version, and if it Optimized. To find these details simply press **Detail** in the `Compiler` Tab. 
+
+![img](https://i.gyazo.com/a82908a13f9b5a66558b6796de9b7da8.png) 
+
+Last but not least, enter the Smart Contract code then press Verify. 
+
+***The Code should now be available to be seen by the public.***
+
+
+
+**(BEFORE THE NEXT STEPS, MAKE SURE NPM AND NODE.JS IS INSTALL)**
+
+**Step 6)** Create a folder and name it relevant to your dApp.
+
+**Step 7)** Add a directory named `src` and in the directory, create an empty file named `index.js`.
+
+
+
+**Step 8)** Open a Node.js command prompt and run it as an administrator. Change the directory of the command prompt to your root directory of your dApp and run the following command to **install Webpack**:
+
+```npm
+npm install webpack webpack-cli webpack-dev-server --save-dev
+```
+
+**Breaking down the command**
+
+`npm` is the package manager for JavaScript, it helps with retrieving dependencies for your JavaScript project very easy.
+
+`install` command will download the component and saves it in the current directory, in this case our root directory of our dApp project.
+
+`webpack webpack-cli webpack-dev-server` is a command that contains many delimited statements for a Webpack
+
+`--save-dev` tells the package manager to make the packages available in development mode but not in production. **The dApp being created has no server-side dependencies.**
+
+
+
+**Step 9) ** After Webpack is installed, you may now launch the Webpack dev server by using this command in the Node.js command prompt:
+
+```npm
+npx webpack-dev-server --https
+```
+
+`npx` is used to execute an npm package, in this case webpcak-dev-server.
+
+`--https` option will generate a certificate automatically helping make testing easy.
+
+
+
+**Step 10)** You may now visit your website that is in development by opening https://localhost:8080 in your browser. Press advanced options and proceed to localhost.
+
+
+
+**Step 11) **Create an empty `index.html` file in the root directory of your dApp project.
+
+In the html file, add the following code to add the basic website template that includes jquery and the main.js file: 
+
+```html
+<html>
+    <head>
+        <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js">			    </script>
+        <script src="./dist/main.js"></script>
+    </head>
+    <body>
+    </body>
+</html>
+```
+
+The code `<script src="./dist/main.js"></script>` will basically create a main.js file in a `dist` directory that will be a bundle of all the javascript files you have created.
+
+
+
+**Step 12) ** 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -964,6 +1117,10 @@ https://hackernoon.com/ethereum-development-walkthrough-part-2-truffle-ganache-g
 https://medium.com/@gus_tavo_guim/reentrancy-attack-on-smart-contracts-how-to-identify-the-exploitable-and-an-example-of-an-attack-4470a2d8dfe4
 https://ethereum.stackexchange.com/questions/10681/what-are-ipc-and-rpc
 https://blockgeeks.com/guides/ethereum-token/
+
+
+
+https://steemit.com/tutorial/@hardlydifficult/ethereum-dapp-tutorial-part-2-of-3-web-front-end-with-metamask-integration
 
 
 
