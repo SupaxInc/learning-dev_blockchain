@@ -1003,13 +1003,15 @@ npm install webpack webpack-cli webpack-dev-server --save-dev
 npx webpack-dev-server --https
 ```
 
-`npx` is used to execute an npm package, in this case webpcak-dev-server.
+`npx` is used to execute an npm package, in this case webpack-dev-server.
 
 `--https` option will generate a certificate automatically helping make testing easy.
 
 
 
 **Step 10)** You may now visit your website that is in development by opening https://localhost:8080 in your browser. Press advanced options and proceed to localhost.
+
+**For now close the command prompts and we will re-open them again later.**
 
 
 
@@ -1032,7 +1034,68 @@ The code `<script src="./dist/main.js"></script>` will basically create a main.j
 
 
 
-**Step 12) ** 
+**Step 12) ** In the `index.js` file create constant variables for your contract address and ABI. It should look like this: 
+
+```javascript
+const contract_address = "0x48b6fc9b9b501ace88cc50e83011235d6a8373d0";
+const abi = [
+	{
+		"anonymous": false,
+		"inputs": [
+            .....
+            }
+            ];
+```
+
+You can find all of these information again in the `Compiler` Tab of the Remix IDE.
+
+Press `Details` and just copy the information to your clipboard.
+
+![img](https://i.gyazo.com/6ba17e6470a88c1204252ec34fb16800.png) 
+
+
+
+**Step 13) ** We will now move away form the minimal Webpack deployment for testing from *Step 9-10* and move onto a more capable environment.
+
+Open a new Node.js command prompt as administrator and run this command: 
+
+`npm init -y` , this will create a package.json file which will help manage the packages we will be adding.
+
+
+
+**Step 14) ** In the same command prompt enter the following command:
+
+```npm
+npx webpack-dev-server --https
+```
+
+This will again launch the local server.
+
+
+
+**Step 15) **Open another command prompt as administrator and change directory to the root directory of your dApp project. 
+
+Type this command: 
+
+```npm
+npx webpack --mode=development
+```
+
+This command **compiles your application** and generates the `dist/main.js`  that we have added in the `index.html` file. 
+
+**YOU WILL NEED TO RUN THIS COMMAND ANYTIME YOU HAVE CHANGED YOUR JAVASCRIPT FILES**
+
+`--mode=development` option prevents compression in order to make debugging easier.
+
+
+
+**Step 16) **We will now **add Web3 and Ledger support.**
+
+Type this command to install the following Web3.js and Ledger components:
+
+```npm
+npm install web3 web3-provider-engine @ledgerhq/web3-subprovider @ledgerhq/hw-transport-u2f
+```
 
 
 
@@ -1040,7 +1103,76 @@ The code `<script src="./dist/main.js"></script>` will basically create a main.j
 
 
 
+**Step 17) **Add the following include directives add the top of your `index.js` file:
 
+```javascript
+import Web3 from "web3";
+import createLedgerSubprovider from "@ledgerhq/web3-subprovider";
+import TransportU2F from "@ledgerhq/hw-transport-u2f";
+import ProviderEngine from "web3-provider-engine";
+import RpcSubprovider from "web3-provider-engine/subproviders/rpc";
+```
+
+Since Metamask does not use the latest version of Web3.js to maintain backward compatibility for dApps, we need to change the Web3 object that Metamask provides by using the latest directive. **We will now be able to support read-only calls for users who don't have either MetaMask or Ledger.**
+
+The rest of the `import` statements are for the Web3 and Ledger support.
+
+
+
+
+
+
+
+**Step 18) ** In the `index.js` file, add the following code:
+
+```javascript
+let my_web3;		// Replacing Web3 object Metamask provides with this.
+let account;		// Variable will allow us to block any attempt to create 					   a transaction.
+const rpcUrl = "https://ropsten.infura.io";
+let contract; 
+window.addEventListener('load', () => {
+    const use_ledger = location.search.indexOf("ledger=true") >= 0;
+  
+    if(use_ledger)
+    {
+      const engine = new ProviderEngine();
+      const getTransport = () => TransportU2F.create();
+      const ledger = createLedgerSubprovider(getTransport, {
+        networkId: 3, // 3 == Ropsten testnet
+      });
+      engine.addProvider(ledger);
+      engine.addProvider(new RpcSubprovider({ rpcUrl }));
+      engine.start();
+      my_web3 = new Web3(engine);
+      $('#mode').text("Ledger");
+    } else if(typeof(web3) === 'undefined') {
+      my_web3 = new Web3(new Web3.providers.HttpProvider(rpcUrl));
+      $('#mode').text("None");
+    } else {
+      my_web3 = new Web3(web3.currentProvider);
+      $('#mode').text("MetaMask");
+    }
+    contract = new my_web3.eth.Contract(abi, contract_address);
+    my_web3.eth.getAccounts((error, result) => {	//promise statement
+      if(error) {
+        console.log(error);
+      } else if(result.length == 0) {
+        console.log("You are not logged in");
+      } else {
+        account = result[0];
+        contract.options.from = account;
+      }
+    }).catch((error) => {	// new Web3.js version uses promises, any error 							caught is responded to here.
+      console.log("Error: " + error);
+    });
+});
+```
+
+`const rcpUrl` is needed because our application reads from an Ethereum node. Users that don't have a Metamask account needs this to be able to select a node manually.
+
+
+
+`window.addEventListener('load')` is being used because on 'load' Metamask adds an object named `web3` automatically to the page before 'load' completes. So on load, we use the web3 object to create a **contract object** using the **abi** and **contact_address** that we have made earlier.
 
 
 
