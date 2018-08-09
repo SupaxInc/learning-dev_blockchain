@@ -178,6 +178,10 @@ const abi = [
 
 let my_web3;
 let account;
+let wrestler1;
+let wrestler2;
+let wrestler1Played;
+let wrestler2Played;
 const rpcUrl = "https://ropsten.infura.io";
 let contract; 
 window.addEventListener('load', () => {
@@ -209,10 +213,66 @@ window.addEventListener('load', () => {
       } else if(result.length == 0) {
         console.log("You are not logged in");
       } else {
-        account = result[0];
-        contract.options.from = account;
+		account = result[0];
+		contract.options.from = account;
+		contract.methods.wrestler1().call(function(error, result){
+			if(error){
+				console.log(error);
+			}
+			wrestler1 = result;		// BIG PROBLEM WITH WRESTLER1 ALWAYS BEING THE ACCOUNT
+									// DEPLOYED THE CONTRACT
+			$('#wrestler1').text(wrestler1);
+		});
+		contract.methods.wrestler2().call(function(error, result){
+			if(error){
+				console.log(error);
+			}
+			wrestler2 = result;
+			if(wrestler2 != null){
+				$('#wrestler2').text(wrestler2);
+				document.getElementById('register').style.visibility = 'hidden';
+			} else {
+				$('#wrestler2').text("Please find a player to wrestle!");
+				document.getElementById('register').style.visibility = 'visible';
+			}
+		});
       }
     }).catch((error) => {
       console.log("Error: " + error);
-    });
+	});
+	
+	$('#register').click(registerAsAnOpponent);
+	$('#wrestle_1').click(wrestle);
+	$('#wrestle_2').click(wrestle);
 });
+
+function registerAsAnOpponent() {
+	contract.methods.registerAsAnOpponent().send(
+		{gasPrice: my_web3.utils.toWei("4.1", 'Gwei')},
+		(error, result) => {
+			if(error){
+				return console.log(error);
+			}
+			console.log("Tx Hash: " + result);
+		}
+	).catch((error) => {
+		console.log("Error: " + error);
+	})
+}
+
+function wrestle() {		// fix this function
+	let value1 = my_web3.utils.toBN($('#value_1').val());
+	let value2 = my_web3.utils.toBN($('#value_2').val());
+	contract.methods.wrestle()(
+		{gasPrice: my_web3.utils.toWei("4.1", 'Gwei')},
+		{value: my_web3.utils.toWei(value1, 'ether')},
+		(error, result) => {
+			if(error){
+				return console.log(error);
+			}
+			console.log("Tx Hash: " + result);
+		}
+	).catch((error) => {
+		console.log("Error: " + error);
+	});
+}
