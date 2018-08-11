@@ -186,7 +186,7 @@ const rpcUrl = "https://ropsten.infura.io";
 let contract; 
 window.addEventListener('load', () => {
     const use_ledger = location.search.indexOf("ledger=true") >= 0;
-  
+	
     if(use_ledger)
     {
       const engine = new ProviderEngine();
@@ -214,37 +214,72 @@ window.addEventListener('load', () => {
         console.log("You are not logged in");
       } else {
 		account = result[0];
-		contract.options.from = account;
-		contract.methods.wrestler1().call(function(error, result){
-			if(error){
-				console.log(error);
-			}
-			wrestler1 = result;		// BIG PROBLEM WITH WRESTLER1 ALWAYS BEING THE ACCOUNT
-									// DEPLOYED THE CONTRACT
-			$('#wrestler1').text(wrestler1);
-		});
-		contract.methods.wrestler2().call(function(error, result){
-			if(error){
-				console.log(error);
-			}
-			wrestler2 = result;
-			if(wrestler2 != null){
-				$('#wrestler2').text(wrestler2);
-				document.getElementById('register').style.visibility = 'hidden';
-			} else {
-				$('#wrestler2').text("Please find a player to wrestle!");
-				document.getElementById('register').style.visibility = 'visible';
-			}
-		});
+		contract.options.from = account;	// the transactions should be made from the chosen account
+		$('#account').text(account);
       }
     }).catch((error) => {
       console.log("Error: " + error);
 	});
 	
+	contract.methods.wrestler1().call(function(error, result){	// resolve wrestler1 variable
+		if(error){
+			console.log(error);
+		}
+		wrestler1 = result;	
+		$('#wrestler1').text(wrestler1);
+	}).catch((error) => {
+		console.log("Error: " + error);
+	});
+
+	contract.methods.wrestler2().call(function(error, result){	// resolve wrestler2 variable
+		if(error){
+			console.log(error);
+		}
+		wrestler2 = result;
+		if(wrestler2 != null){		// checks if wrestler2 exists, if not show register button
+			$('#wrestler2').text(wrestler2);
+			document.getElementById('register').style.visibility = 'hidden';
+		} else {
+			$('#wrestler2').text("Please find a player to wrestle!");
+			document.getElementById('register').style.visibility = 'visible';
+		}
+	}).catch((error) => {
+		console.log("Error: " + error); 
+	});
+
+	contract.methods.wrestler1Played().call(function(error, result){
+		if(error){
+			console.log(error);
+		}
+		wrestler1Played = result;
+		if(wrestler1Played == true) {		// check which account and hides Wrestle! button depending if 
+			document.getElementById('wrestle_2').style.visibility = 'visible';
+			document.getElementById('wrestle_1').style.visibility = 'hidden';
+		}
+	}).catch((error) => {
+		console.log("Error: " + error);
+	});
+
+	contract.methods.wrestler2Played().call(function(error, result){
+		if(error){
+			console.log(error);
+		}
+		wrestler2Played = result;
+		if(wrestler2Played == true) {		// check which account and hides Wrestle! button depending if 
+			document.getElementById('wrestle_1').style.visibility = 'visible';
+			document.getElementById('wrestle_2').style.visibility = 'hidden';
+		}
+	}).catch((error) => {
+		console.log("Error: " + error);
+	});
+
+
 	$('#register').click(registerAsAnOpponent);
 	$('#wrestle_1').click(wrestle);
 	$('#wrestle_2').click(wrestle);
 });
+// variables initiated inside the promise is only initialized after the load event
+
 
 function registerAsAnOpponent() {
 	contract.methods.registerAsAnOpponent().send(
@@ -257,22 +292,40 @@ function registerAsAnOpponent() {
 		}
 	).catch((error) => {
 		console.log("Error: " + error);
-	})
+	});
 }
 
 function wrestle() {		// fix this function
-	let value1 = my_web3.utils.toBN($('#value_1').val());
-	let value2 = my_web3.utils.toBN($('#value_2').val());
-	contract.methods.wrestle()(
-		{gasPrice: my_web3.utils.toWei("4.1", 'Gwei')},
-		{value: my_web3.utils.toWei(value1, 'ether')},
-		(error, result) => {
-			if(error){
-				return console.log(error);
+	let value1 = $('#deposit_1').val();
+	let value2 = $('#deposit_2').val();
+
+	if(account === wrestler1){
+		contract.methods.wrestle().send(
+			{from: account,
+			gasPrice: my_web3.utils.toWei("4.1", 'Gwei'),
+			value: my_web3.utils.toWei(value1, 'ether')},
+			(error, result) => {
+				if(error){
+					return console.log(error);
+				}
+				console.log("Tx Hash: " + result);
 			}
-			console.log("Tx Hash: " + result);
-		}
-	).catch((error) => {
-		console.log("Error: " + error);
-	});
+		).catch((error) => {
+			console.log("Error: " + error);
+		});
+	} else {
+		contract.methods.wrestle().send(
+			{from: account,
+			gasPrice: my_web3.utils.toWei("4.1", 'Gwei'),
+			value: my_web3.utils.toWei(value2, 'ether')},
+			(error, result) => {
+				if(error){
+					return console.log(error);
+				}
+				console.log("Tx Hash: " + result);
+			}
+		).catch((error) => {
+			console.log("Error: " + error);
+		});
+	}
 }
