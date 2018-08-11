@@ -4,7 +4,7 @@ import TransportU2F from "@ledgerhq/hw-transport-u2f";
 import ProviderEngine from "web3-provider-engine";
 import RpcSubprovider from "web3-provider-engine/subproviders/rpc";
 
-const contract_address = "0x48b6fc9b9b501ace88cc50e83011235d6a8373d0";
+const contract_address = "0x033C341Edea44FDE85BCb114A632E2A2c8E19C4E";
 const abi = [
 	{
 		"anonymous": false,
@@ -26,7 +26,25 @@ const abi = [
 	{
 		"constant": false,
 		"inputs": [],
-		"name": "registerAsAnOpponent",
+		"name": "registerWrestler1",
+		"outputs": [],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [],
+		"name": "registerWrestler2",
+		"outputs": [],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [],
+		"name": "resetGame",
 		"outputs": [],
 		"payable": false,
 		"stateMutability": "nonpayable",
@@ -40,23 +58,6 @@ const abi = [
 		"payable": false,
 		"stateMutability": "nonpayable",
 		"type": "function"
-	},
-	{
-		"anonymous": false,
-		"inputs": [
-			{
-				"indexed": false,
-				"name": "wrestler1",
-				"type": "address"
-			},
-			{
-				"indexed": false,
-				"name": "wrestler2",
-				"type": "address"
-			}
-		],
-		"name": "WrestlingStartsEvent",
-		"type": "event"
 	},
 	{
 		"constant": false,
@@ -93,7 +94,35 @@ const abi = [
 	{
 		"constant": true,
 		"inputs": [],
+		"name": "gains",
+		"outputs": [
+			{
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [],
 		"name": "gameFinished",
+		"outputs": [
+			{
+				"name": "",
+				"type": "bool"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [],
+		"name": "hasWinnerWithdrawn",
 		"outputs": [
 			{
 				"name": "",
@@ -135,6 +164,20 @@ const abi = [
 	{
 		"constant": true,
 		"inputs": [],
+		"name": "wrestler1Deposit",
+		"outputs": [
+			{
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [],
 		"name": "wrestler1Played",
 		"outputs": [
 			{
@@ -163,6 +206,20 @@ const abi = [
 	{
 		"constant": true,
 		"inputs": [],
+		"name": "wrestler2Deposit",
+		"outputs": [
+			{
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [],
 		"name": "wrestler2Played",
 		"outputs": [
 			{
@@ -182,6 +239,11 @@ let wrestler1;
 let wrestler2;
 let wrestler1Played;
 let wrestler2Played;
+let wrestler1Deposit;
+let wrestler2Deposit;
+let gains;
+let theWinner;
+let gameFinished;
 const rpcUrl = "https://ropsten.infura.io";
 let contract; 
 window.addEventListener('load', () => {
@@ -221,12 +283,63 @@ window.addEventListener('load', () => {
       console.log("Error: " + error);
 	});
 	
+	contract.methods.wrestler1Deposit().call(function(error, result){
+		if(error){
+			console.log(error);
+		}
+		wrestler1Deposit = result;
+		$('#wrestler1_deposit').text(result);
+
+	}).catch((error) => {
+		console.log("Error: " + error);
+	});
+
+	contract.methods.wrestler2Deposit().call(function(error, result){
+		if(error){
+			console.log(error);
+		}
+		wrestler2Deposit = result;
+		$('#wrestler2_deposit').text(result);
+		
+	}).catch((error) => {
+		console.log("Error: " + error);
+	});
+
+	contract.methods.theWinner().call(function(error, result){
+		if(error){
+			console.log(error);
+		}
+		theWinner = result;
+		$('#winner').text(result);
+
+	}).catch((error) => {
+		console.log("Error: "+ error);
+	})
+
+	contract.methods.gains().call(function(error, result){
+		if(error){
+			console.log(error);
+		}
+		gains = result;
+		$('#gains').text(result);
+
+	}).catch((error) => {
+		console.log("Error: "+ error);
+	})
+
 	contract.methods.wrestler1().call(function(error, result){	// resolve wrestler1 variable
 		if(error){
 			console.log(error);
 		}
 		wrestler1 = result;	
-		$('#wrestler1').text(wrestler1);
+		if(wrestler1 != 0x0){		// checks if wrestler2 exists, if not show register button
+			$('#wrestler1').text(wrestler1);
+			document.getElementById('register_1').style.visibility = 'hidden';
+		} else {
+			$('#wrestler1').text("Waiting for a player...");
+			document.getElementById('register_1').style.visibility = 'visible';
+		}
+
 	}).catch((error) => {
 		console.log("Error: " + error);
 	});
@@ -236,13 +349,14 @@ window.addEventListener('load', () => {
 			console.log(error);
 		}
 		wrestler2 = result;
-		if(wrestler2 != null){		// checks if wrestler2 exists, if not show register button
+		if(wrestler2 != 0x0){		// checks if wrestler2 exists, if not show register button
 			$('#wrestler2').text(wrestler2);
-			document.getElementById('register').style.visibility = 'hidden';
+			document.getElementById('register_2').style.visibility = 'hidden';
 		} else {
-			$('#wrestler2').text("Please find a player to wrestle!");
-			document.getElementById('register').style.visibility = 'visible';
+			$('#wrestler2').text("Waiting for a player...");
+			document.getElementById('register_2').style.visibility = 'visible';
 		}
+
 	}).catch((error) => {
 		console.log("Error: " + error); 
 	});
@@ -255,6 +369,8 @@ window.addEventListener('load', () => {
 		if(wrestler1Played == true) {		// check which account and hides Wrestle! button depending if 
 			document.getElementById('wrestle_2').style.visibility = 'visible';
 			document.getElementById('wrestle_1').style.visibility = 'hidden';
+		} else {
+			document.getElementById('wrestle_1').style.visibility = 'visible';
 		}
 	}).catch((error) => {
 		console.log("Error: " + error);
@@ -268,21 +384,49 @@ window.addEventListener('load', () => {
 		if(wrestler2Played == true) {		// check which account and hides Wrestle! button depending if 
 			document.getElementById('wrestle_1').style.visibility = 'visible';
 			document.getElementById('wrestle_2').style.visibility = 'hidden';
+		} else {
+			document.getElementById('wrestle_2').style.visibility = 'visible';
 		}
 	}).catch((error) => {
 		console.log("Error: " + error);
 	});
 
 
-	$('#register').click(registerAsAnOpponent);
+
+
+	// DEBUGGING PURPOSES
+	// my_web3.eth.getStorageAt(contract_address, 2).then(console.log);
+	// my_web3.eth.getStorageAt(contract_address, 3).then(console.log);
+	// my_web3.eth.getStorageAt(contract_address, 6).then(console.log);
+	// my_web3.eth.getStorageAt(contract_address, 7).then(console.log);
+	// my_web3.eth.getStorageAt(contract_address, 8).then(console.log);
+	
+	$('#register_1').click(registerWrestler1);
+	$('#register_2').click(registerWrestler2);
 	$('#wrestle_1').click(wrestle);
 	$('#wrestle_2').click(wrestle);
+	$('#withdraw_1').click(withdraw);
+	$('#withdraw_2').click(withdraw);
 });
 // variables initiated inside the promise is only initialized after the load event
 
 
-function registerAsAnOpponent() {
-	contract.methods.registerAsAnOpponent().send(
+function registerWrestler1() {
+	contract.methods.registerWrestler1().send(
+		{gasPrice: my_web3.utils.toWei("4.1", 'Gwei')},
+		(error, result) => {
+			if(error){
+				return console.log(error);
+			}
+			console.log("Tx Hash: " + result);
+		}
+	).catch((error) => {
+		console.log("Error: " + error);
+	});
+}
+
+function registerWrestler2() {
+	contract.methods.registerWrestler2().send(
 		{gasPrice: my_web3.utils.toWei("4.1", 'Gwei')},
 		(error, result) => {
 			if(error){
@@ -328,4 +472,22 @@ function wrestle() {		// fix this function
 			console.log("Error: " + error);
 		});
 	}
+}
+
+function withdraw() {
+	contract.methods.withdraw().send(
+		{gasPrice: my_web3.utils.toWei("4.1", 'Gwei')},
+		(error, result) => {
+			if(error){
+				return console.log(error);
+			}
+			console.log("Tx Hash: " + result);
+		}
+	).catch((error) => {
+		console.log("Error: " + error);
+	});
+}
+
+function checkWinner() {
+
 }

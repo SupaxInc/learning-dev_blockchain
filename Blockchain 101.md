@@ -62,7 +62,7 @@ contract Wrestling {	// how to start creating the smart contract
         // require function will check,
         // if wrestler2 does not already have an address, we will proceed.
         // else it refuses new registrations
-        require(wrestler2 == address(0));
+        require(wrestler2 == address(0));	// address(0) means 0x000....
         wrestler2 = msg.sender;
         // We start the end when both wrestlers are registered.
         WrestlingStartsEvent(wrestler1, wrestler2);

@@ -6,19 +6,32 @@
     <body>
             <p>Choose a wallet:
             <a href="?ledger=false">Metamask</a> | <a href="?ledger=true">Ledger</a></p>
-            <p>Wallet Type: <span id="mode"></span><br>
+            <p>
+                Wallet Type: <span id="mode"></span><br>
                 Current Account: <span id="account"></span>
             </p>
             <br><br>
-            <p>Wrestler 1: <span id="wrestler1"></span>
-            <br><br><input type="text" id="deposit_1">
-            <button id="wrestle_1">Wrestle!</button>
+            <p>
+                The Winner: <span id="winner"></span><br>
+                The total pot: <span id="gains"></span>
             </p>
             <br>
-            <p>Wrestler 2: <span id="wrestler2"></span>
-            <br><br><input type="text" id="deposit_2">
-            <button id="wrestle_2">Wrestle!</button>
-            <br><br><button id="register">Register as Opponent</button>
+            <p>
+                Wrestler 1: <span id="wrestler1"></span>
+                <br><button id="register_1">Register as an Opponent</button>
+                <br><br>Deposit: <input type="text" id="deposit_1">
+                <button id="wrestle_1">Wrestle!</button>
+                <br>Wrestler1 Total Deposit: <span id="wrestler1_deposit"></span>
+                <button id="withdraw_1">Withdraw</button>
+            </p>
+            <br><br>
+            <p>
+                Wrestler 2: <span id="wrestler2"></span>
+                <br><button id="register_2">Register as an Opponent</button>
+                <br><br>Deposit: <input type="text" id="deposit_2">
+                <button id="wrestle_2">Wrestle!</button>
+                <br>Wrestler2 Total Deposit: <span id="wrestler2_deposit"></span>
+                <button id="withdraw_2">Withdraw</button>
             </p>
             
     </body>
