@@ -244,6 +244,7 @@ let wrestler2Deposit;
 let gains;
 let theWinner;
 let gameFinished;
+let isLoggedIn;
 const rpcUrl = "https://ropsten.infura.io";
 let contract; 
 window.addEventListener('load', () => {
@@ -259,7 +260,8 @@ window.addEventListener('load', () => {
       engine.addProvider(ledger);
       engine.addProvider(new RpcSubprovider({ rpcUrl }));
       engine.start();
-      my_web3 = new Web3(engine); 
+	  my_web3 = new Web3(engine); 
+	  isLoggedIn = true;
       $('#mode').text("Ledger");
     } else if(typeof(web3) === 'undefined') {
       my_web3 = new Web3(new Web3.providers.HttpProvider(rpcUrl));
@@ -273,18 +275,22 @@ window.addEventListener('load', () => {
       if(error) {
         console.log(error);
       } else if(result.length == 0) {
-        console.log("You are not logged in");
+		console.log("You are not logged in");
+		isLoggedIn = false;
+		checkIfLoggedIn(isLoggedIn);
       } else {
 		account = result[0];
+		isLoggedIn = true;
 		contract.options.from = account;	// the transactions should be made from the chosen account
 		$('#account').text(account);
+		checkIfLoggedIn(isLoggedIn);
       }
     }).catch((error) => {
       console.log("Error: " + error);
 	});
 	
-	contract.methods.wrestler1Deposit().call(function(error, result){
-		if(error){
+	contract.methods.wrestler1Deposit().call(function (error, result) {
+		if (error) {
 			console.log(error);
 		}
 		wrestler1Deposit = result;
@@ -294,45 +300,45 @@ window.addEventListener('load', () => {
 		console.log("Error: " + error);
 	});
 
-	contract.methods.wrestler2Deposit().call(function(error, result){
-		if(error){
+	contract.methods.wrestler2Deposit().call(function (error, result) {
+		if (error) {
 			console.log(error);
 		}
 		wrestler2Deposit = result;
 		$('#wrestler2_deposit').text(result);
-		
+
 	}).catch((error) => {
 		console.log("Error: " + error);
 	});
 
-	contract.methods.theWinner().call(function(error, result){
-		if(error){
+	contract.methods.theWinner().call(function (error, result) {
+		if (error) {
 			console.log(error);
 		}
 		theWinner = result;
 		$('#winner').text(result);
 
 	}).catch((error) => {
-		console.log("Error: "+ error);
+		console.log("Error: " + error);
 	})
 
-	contract.methods.gains().call(function(error, result){
-		if(error){
+	contract.methods.gains().call(function (error, result) {
+		if (error) {
 			console.log(error);
 		}
 		gains = result;
 		$('#gains').text(result);
 
 	}).catch((error) => {
-		console.log("Error: "+ error);
+		console.log("Error: " + error);
 	})
 
-	contract.methods.wrestler1().call(function(error, result){	// resolve wrestler1 variable
-		if(error){
+	contract.methods.wrestler1().call(function (error, result) {	// resolve wrestler1 variable
+		if (error) {
 			console.log(error);
 		}
-		wrestler1 = result;	
-		if(wrestler1 != 0x0){		// checks if wrestler2 exists, if not show register button
+		wrestler1 = result;
+		if (wrestler1 != 0x0) {		// checks if wrestler2 exists, if not show register button
 			$('#wrestler1').text(wrestler1);
 			document.getElementById('register_1').style.visibility = 'hidden';
 		} else {
@@ -344,12 +350,12 @@ window.addEventListener('load', () => {
 		console.log("Error: " + error);
 	});
 
-	contract.methods.wrestler2().call(function(error, result){	// resolve wrestler2 variable
-		if(error){
+	contract.methods.wrestler2().call(function (error, result) {	// resolve wrestler2 variable
+		if (error) {
 			console.log(error);
 		}
 		wrestler2 = result;
-		if(wrestler2 != 0x0){		// checks if wrestler2 exists, if not show register button
+		if (wrestler2 != 0x0) {		// checks if wrestler2 exists, if not show register button
 			$('#wrestler2').text(wrestler2);
 			document.getElementById('register_2').style.visibility = 'hidden';
 		} else {
@@ -358,15 +364,15 @@ window.addEventListener('load', () => {
 		}
 
 	}).catch((error) => {
-		console.log("Error: " + error); 
+		console.log("Error: " + error);
 	});
 
-	contract.methods.wrestler1Played().call(function(error, result){
-		if(error){
+	contract.methods.wrestler1Played().call(function (error, result) {
+		if (error) {
 			console.log(error);
 		}
 		wrestler1Played = result;
-		if(wrestler1Played == true) {		// check which account and hides Wrestle! button depending if 
+		if (wrestler1Played == true) {		// check which account and hides Wrestle! button depending if 
 			document.getElementById('wrestle_2').style.visibility = 'visible';
 			document.getElementById('wrestle_1').style.visibility = 'hidden';
 		} else {
@@ -376,12 +382,12 @@ window.addEventListener('load', () => {
 		console.log("Error: " + error);
 	});
 
-	contract.methods.wrestler2Played().call(function(error, result){
-		if(error){
+	contract.methods.wrestler2Played().call(function (error, result) {
+		if (error) {
 			console.log(error);
 		}
 		wrestler2Played = result;
-		if(wrestler2Played == true) {		// check which account and hides Wrestle! button depending if 
+		if (wrestler2Played == true) {		// check which account and hides Wrestle! button depending if 
 			document.getElementById('wrestle_1').style.visibility = 'visible';
 			document.getElementById('wrestle_2').style.visibility = 'hidden';
 		} else {
@@ -394,6 +400,8 @@ window.addEventListener('load', () => {
 
 
 
+
+
 	// DEBUGGING PURPOSES
 	// my_web3.eth.getStorageAt(contract_address, 2).then(console.log);
 	// my_web3.eth.getStorageAt(contract_address, 3).then(console.log);
@@ -401,6 +409,8 @@ window.addEventListener('load', () => {
 	// my_web3.eth.getStorageAt(contract_address, 7).then(console.log);
 	// my_web3.eth.getStorageAt(contract_address, 8).then(console.log);
 	
+	// we set these buttons on load event, to ensure that the DOM has loaded, or it
+	// might execute before the HTML is available then fail to attach
 	$('#register_1').click(registerWrestler1);
 	$('#register_2').click(registerWrestler2);
 	$('#wrestle_1').click(wrestle);
@@ -440,7 +450,7 @@ function registerWrestler2() {
 }
 
 function wrestle() {		// fix this function
-	let value1 = $('#deposit_1').val();
+	let value1 = $('#deposit_1').val();		// grabs the value from textbox
 	let value2 = $('#deposit_2').val();
 
 	if(account === wrestler1){
@@ -490,4 +500,31 @@ function withdraw() {
 
 function checkWinner() {
 
+}
+
+function checkIfLoggedIn(isLoggedIn) {
+	if(isLoggedIn){
+		$('.isLoggedIn').show();	// jQuery code that grabs makes css class selector visible
+		// OVER COMPLICATING THINGS, JUST USE jQuery
+
+		// for (var i=0; i < hideParagraph.length; i++){		// how to hide multiple elements in a class
+		// 	hideParagraph[i].style.visiblity = "visible";
+		// }
+		// document.getElementById('register_1').style.visibility = "visible";
+		// document.getElementById('wrestle_1').style.visibility = "visible";
+		// document.getElementById('winner').style.visibility = "visible";
+		// document.getElementById('gains').style.visibility = "visible";
+	} else {
+		$('.isLoggedIn').hide();
+		// OVER COMPLCIATING THINGS, JUST USE jQuery
+
+		// for (var i=0; i < hideParagraph.length; i++){		// how to hide multiple elements in a class
+		// 	hideParagraph[i].style.visibility = "hidden";
+		// }
+		// document.getElementById('register_1').style.visibility = "hidden";
+		// document.getElementById('wrestle_1').style.visibility = "hidden";
+		// document.getElementById('winner').style.visibility = "hidden";
+		// document.getElementById('gains').style.visibility = "hidden";
+		$('#account').text("Please Log in to MetaMask.");
+	}
 }
