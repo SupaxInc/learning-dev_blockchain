@@ -499,7 +499,9 @@ function withdraw() {
 }
 
 function checkWinner() {
-
+	if(gameFinished){
+		
+	}
 }
 
 function checkIfLoggedIn(isLoggedIn) {
